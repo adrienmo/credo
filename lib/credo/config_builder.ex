@@ -67,6 +67,8 @@ defmodule Credo.ConfigBuilder do
     |> add_switch_all(switches)
     |> add_switch_color(switches)
     |> add_switch_crash_on_error(switches)
+    |> add_switch_base_folder(switches)
+    |> add_switch_export_file_name(switches)
     |> add_switch_debug(switches)
     |> add_switch_enable_disabled_checks(switches)
     |> add_switch_files_excluded(switches)
@@ -148,6 +150,18 @@ defmodule Credo.ConfigBuilder do
   end
 
   defp add_switch_crash_on_error(exec, _), do: exec
+
+  defp add_switch_base_folder(exec, %{base_folder: base_folder}) when is_bitstring(base_folder) do
+    %Execution{exec | base_folder: base_folder}
+  end
+
+  defp add_switch_base_folder(exec, _), do: exec
+
+  defp add_switch_export_file_name(exec, %{export_file_name: export_file_name}) when is_bitstring(export_file_name) do
+    %Execution{exec | export_file_name: export_file_name}
+  end
+
+  defp add_switch_export_file_name(exec, _), do: exec
 
   defp add_switch_mute_exit_status(exec, %{mute_exit_status: true}) do
     %Execution{exec | mute_exit_status: true}

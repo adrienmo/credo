@@ -53,6 +53,7 @@ defmodule Credo.CLI.Command.Suggest.SuggestCommand do
     @moduledoc false
 
     use Credo.Execution.Task
+    alias Credo.CLI.Command.Suggest.Output.SonarQube
 
     def call(exec, _opts) do
       source_files = Execution.get_source_files(exec)
@@ -61,6 +62,7 @@ defmodule Credo.CLI.Command.Suggest.SuggestCommand do
       time_run = Execution.get_assign(exec, "credo.time.run_checks")
 
       SuggestOutput.print_after_info(source_files, exec, time_load, time_run)
+      SonarQube.print_after_info(source_files, exec, time_load, time_run)
 
       exec
     end

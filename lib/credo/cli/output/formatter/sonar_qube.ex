@@ -1,16 +1,14 @@
 defmodule Credo.CLI.Output.Formatter.SonarQube do
   @moduledoc false
 
-  alias Credo.CLI.Output.Formatter.Oneline
   alias Credo.Issue
 
-  @file_output "credo_sonarqube.json"
+  def print_issues(_issues, _base_folder, nil), do: :ok
 
-  def print_issues(issues) do
-    map = %{"issues" => Enum.map(issues, &to_json/1)}
+  def print_issues(issues, base_folder, export_file_name) do
+    map = %{"issues" => Enum.map(issues, &to_json(&1, base_folder))}
     output = Jason.encode!(map, pretty: true)
-    File.write(@file_output, output)
-    Oneline.print_issues(issues)
+    File.write!(export_file_name, output)
   end
 
   defp to_json(
@@ -20,7 +18,8 @@ defmodule Credo.CLI.Output.Formatter.SonarQube do
            message: message,
            filename: filename,
            priority: priority
-         } = issue
+         } = issue,
+         base_folder
        ) do
     check_name =
       check
@@ -40,7 +39,7 @@ defmodule Credo.CLI.Output.Formatter.SonarQube do
       "effortMinutes" => 90,
       "primaryLocation" => %{
         "message" => message,
-        "filePath" => "backend/backend/" <> to_string(filename),
+        "filePath" => base_folder <> to_string(filename),
         "textRange" => %{
           "startLine" => issue.line_no
         }
